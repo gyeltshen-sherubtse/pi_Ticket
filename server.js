@@ -25,9 +25,9 @@ app.get('/scan', scanQRCode); // Render the CID input form
 app.post('/scan', scanQRCodePost); // Handle CID form submission and ticket generation
 app.get('/download-ticket', downloadTicket); // Handle ticket download
 
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-// });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;
