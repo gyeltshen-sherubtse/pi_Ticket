@@ -1,0 +1,17 @@
+<!-- views/scan.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter CID</title>
+</head>
+<body>
+    <h1>Enter Your CID</h1>
+    <form action="/scan" method="POST">
+        <label for="cid">CID:</label>
+        <input type="text" id="cid" name="cid" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
