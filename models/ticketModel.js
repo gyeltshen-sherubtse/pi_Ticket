@@ -23,9 +23,14 @@ const checkCIDExists = async (cid) => {
     return result.rows.length > 0;
 };
 
+const checkTicketExists = async (ticketNumber) => {
+    const result = await client.query('SELECT * FROM piday_ticket WHERE ticket_number = $1', [ticketNumber]);
+    return result.rowCount > 0;
+};
+
 const insertTicket = async (cid, ticketNumber) => {
     const query = 'INSERT INTO piday_ticket (cid, ticket_number) VALUES ($1, $2)';
     await client.query(query, [cid, ticketNumber]);
 };
 
-module.exports = { checkCIDExists, insertTicket };
+module.exports = { checkCIDExists, insertTicket, checkTicketExists };

@@ -1,12 +1,11 @@
-// controllers/ticketController.js
-
 const QRCode = require('qrcode');
-const { checkCIDExists, insertTicket } = require('../models/ticketModel');
+const { checkCIDExists, insertTicket, checkTicketExists } = require('../models/ticketModel');
 
 // Generate QR Code
 const generateQRCode = async (req, res) => {
     try {
-        const qrCodeData = "https://pi-ticket.onrender.com/scan"; // URL for scanning
+        // const qrCodeData = "https://pi-ticket.onrender.com/scan"; //for production
+        const qrCodeData = "http://localhost:3000/scan"; //for local
         const qrCode = await QRCode.toDataURL(qrCodeData);
         res.render('index', { qrCode });
     } catch (err) {
@@ -17,37 +16,40 @@ const generateQRCode = async (req, res) => {
 
 // Render the CID input page
 const scanQRCode = (req, res) => {
-    res.render('scan'); // Render the CID input form
+    res.render('scan', { errorMessage: null }); // Pass error message if needed
 };
 
 // Handle CID form submission and generate ticket
 const scanQRCodePost = async (req, res) => {
     const { cid } = req.body;
 
-    if (await checkCIDExists(cid)) {
-        return res.status(400).send('Ticket already issued for this CID');
+    // Validate CID (Must be exactly 11 digits)
+    if (!/^\d{11}$/.test(cid)) {
+        return res.render('scan', { errorMessage: '❌ Invalid CID! It must be exactly 11 digits.' });
     }
 
-    const ticketNumber = '314' + Math.floor(1000 + Math.random() * 9000);
-    await insertTicket(cid, ticketNumber);
+    if (await checkCIDExists(cid)) {
+        return res.render('scan', { errorMessage: '❌ Ticket already issued for this CID.' });
+    }
 
-    res.send(`
-        <h1>Your ticket number is ${ticketNumber}</h1>
-        <a href="/download-ticket?ticket=${ticketNumber}" download>Download Ticket</a>
-    `);
+    let ticketNumber;
+    do {
+        ticketNumber = 'Pi-' + Math.floor(1000 + Math.random() * 9000); // Generate ticket number
+    } while (await checkTicketExists(ticketNumber)); // Ensure uniqueness
+
+    await insertTicket(cid, ticketNumber); // Save to database
+
+    res.render('ticket', { ticketNumber });
 };
 
-// Handle ticket download
+// Render the ticket download page
 const downloadTicket = (req, res) => {
     const ticketNumber = req.query.ticket;
     if (!ticketNumber) {
         return res.status(400).send('No ticket number provided');
     }
 
-    res.send(`
-        <h1>Your ticket number: ${ticketNumber}</h1>
-        <p>Download or screenshot this ticket.</p>
-    `);
+    res.render('ticket', { ticketNumber });
 };
 
 module.exports = {
