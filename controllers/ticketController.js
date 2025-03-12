@@ -4,8 +4,8 @@ const { checkCIDExists, insertTicket, checkTicketExists } = require('../models/t
 // Generate QR Code
 const generateQRCode = async (req, res) => {
     try {
-        // const qrCodeData = "https://pi-ticket.onrender.com/scan"; //for production
-        const qrCodeData = "http://localhost:3000/scan"; //for local
+        const qrCodeData = "https://pi-ticket.onrender.com/scan"; //for production
+        // const qrCodeData = "http://localhost:3000/scan"; //for local
         const qrCode = await QRCode.toDataURL(qrCodeData);
         res.render('index', { qrCode });
     } catch (err) {
