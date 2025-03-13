@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Define routes with their respective controller functions
-app.get('/', generateQRCode); // Generate the QR Code page
+// app.get('/', generateQRCode); // Generate the QR Code page
 app.get('/scan', scanQRCode); // Render the CID input form
 app.post('/scan', scanQRCodePost); // Handle CID form submission and ticket generation
 app.get('/download-ticket', downloadTicket); // Handle ticket download
